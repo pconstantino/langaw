@@ -3,15 +3,20 @@ import 'dart:math';
 import 'package:flame/game.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
+import 'package:langaw/components/backyard.dart';
 import 'package:langaw/components/fly.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/gestures.dart';
+
+
+
 
 class LangawGame extends Game {
   Size screenSize;
   double tileSize;
   List<Fly> flies;
   Random random;
+  Backyard background;
 
   LangawGame() {
     initialize();
@@ -19,11 +24,7 @@ class LangawGame extends Game {
 
   @override
   void render(Canvas canvas) {
-    Rect backgroundRect =
-        Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
-    Paint backgroundPaint = Paint();
-    backgroundPaint.color = Color(0xff576574);
-    canvas.drawRect(backgroundRect, backgroundPaint);
+    background.render(canvas);
 
     //Flies
     for (Fly fly in flies) {
@@ -58,6 +59,8 @@ class LangawGame extends Game {
     flies = List<Fly>();
     random = Random();
     resize(await Flame.util.initialDimensions());
+
+    background = Backyard(game: this);
 
     spawnFly();
   }
