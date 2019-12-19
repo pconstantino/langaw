@@ -15,6 +15,7 @@ import 'package:langaw/view.dart';
 import 'package:langaw/views/home-view.dart';
 import 'package:langaw/components/start-button.dart';
 import 'package:langaw/views/lost-view.dart';
+import 'package:langaw/controllers/spawner.dart';
 
 class LangawGame extends Game {
   Size screenSize;
@@ -26,6 +27,7 @@ class LangawGame extends Game {
   HomeView homeView;
   StartButton startButton;
   LostView lostView;
+  FlySpawner spawner;
 
   LangawGame() {
     initialize();
@@ -54,6 +56,7 @@ class LangawGame extends Game {
     }
 
     flies.removeWhere((Fly fly) => fly.isOffScreen);
+    spawner.update(t);
   }
 
   @override
@@ -79,9 +82,9 @@ class LangawGame extends Game {
           didHitAFly = true;
           isHandled = true;
         }
-        if (activeView == View.playing && !didHitAFly) {
-          activeView = View.lost;
-        }
+      }
+      if (activeView == View.playing && !didHitAFly) {
+        activeView = View.lost;
       }
     }
   }
@@ -95,8 +98,7 @@ class LangawGame extends Game {
     homeView = HomeView(this);
     startButton = StartButton(this);
     lostView = LostView(this);
-
-    spawnFly();
+    spawner = FlySpawner(this);
   }
 
   void spawnFly() {
