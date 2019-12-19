@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:langaw/components/backyard.dart';
 import 'package:langaw/components/fly.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/gestures.dart';
-
-
-
+import 'package:langaw/components/house-fly.dart';
+import 'package:langaw/components/agile-fly.dart';
+import 'package:langaw/components/drooler-fly.dart';
+import 'package:langaw/components/hungry-fly.dart';
+import 'package:langaw/components/macho-fly.dart';
 
 class LangawGame extends Game {
   Size screenSize;
@@ -66,8 +67,25 @@ class LangawGame extends Game {
   }
 
   void spawnFly() {
-    double x = random.nextDouble() * (screenSize.width - tileSize);
-    double y = random.nextDouble() * (screenSize.height - tileSize);
-    flies.add(Fly(game: this, x: x, y: y));
+    double x = random.nextDouble() * (screenSize.width - (tileSize * 2.025));
+    double y = random.nextDouble() * (screenSize.height - (tileSize * 2.025));
+
+    switch (random.nextInt(5)) {
+      case 0:
+        flies.add(HouseFly(this, x, y));
+        break;
+      case 1:
+        flies.add(DroolerFly(this, x, y));
+        break;
+      case 2:
+        flies.add(AgileFly(this, x, y));
+        break;
+      case 3:
+        flies.add(MachoFly(this, x, y));
+        break;
+      case 4:
+        flies.add(HungryFly(this, x, y));
+        break;
+    }
   }
 }
