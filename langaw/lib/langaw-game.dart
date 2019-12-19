@@ -11,6 +11,10 @@ import 'package:langaw/components/agile-fly.dart';
 import 'package:langaw/components/drooler-fly.dart';
 import 'package:langaw/components/hungry-fly.dart';
 import 'package:langaw/components/macho-fly.dart';
+import 'package:langaw/view.dart';
+import 'package:langaw/views/home-view.dart';
+import 'package:langaw/components/start-button.dart';
+import 'package:langaw/views/lost-view.dart';
 
 class LangawGame extends Game {
   Size screenSize;
@@ -18,6 +22,10 @@ class LangawGame extends Game {
   List<Fly> flies;
   Random random;
   Backyard background;
+  View activeView = View.home;
+  HomeView homeView;
+  StartButton startButton;
+  LostView lostView;
 
   LangawGame() {
     initialize();
@@ -30,6 +38,12 @@ class LangawGame extends Game {
     //Flies
     for (Fly fly in flies) {
       fly.render(canvas);
+    }
+
+    if (activeView == View.home) homeView.render(canvas);
+    if (activeView == View.lost) lostView.render(canvas);
+    if (activeView == View.home || activeView == View.lost) {
+      startButton.render(canvas);
     }
   }
 
@@ -49,9 +63,25 @@ class LangawGame extends Game {
   }
 
   void onTapDown(TapDownDetails d) {
-    for (Fly fly in flies) {
-      if (fly.flyRect.contains(d.globalPosition)) {
-        fly.onTapDown();
+    bool isHandled = false;
+    if (!isHandled && startButton.rect.contains(d.globalPosition)) {
+      if (activeView == View.home || activeView == View.lost) {
+        startButton.onTapDown();
+        isHandled = true;
+      }
+    }
+
+    if (!isHandled) {
+      bool didHitAFly = false;
+      for (Fly fly in flies) {
+        if (fly.flyRect.contains(d.globalPosition)) {
+          fly.onTapDown();
+          didHitAFly = true;
+          isHandled = true;
+        }
+        if (activeView == View.playing && !didHitAFly) {
+          activeView = View.lost;
+        }
       }
     }
   }
@@ -62,6 +92,9 @@ class LangawGame extends Game {
     resize(await Flame.util.initialDimensions());
 
     background = Backyard(game: this);
+    homeView = HomeView(this);
+    startButton = StartButton(this);
+    lostView = LostView(this);
 
     spawnFly();
   }
